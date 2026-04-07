@@ -1,0 +1,43 @@
+{
+  "name": "token-deployer-mcp-server",
+  "display_name": "OBSD Token Deployer",
+  "description": "Deploy and manage tokens on Base via the OBSD LaunchPad. Launch tokens with bonding curves, trade, claim creator fees, scan token security, view trending tokens on DexScreener.",
+  "version": "1.0.0",
+  "author": "thryx",
+  "license": "MIT",
+  "repository": "https://github.com/lordbasilaiassistant-sudo/mcp-servers",
+  "transport": "stdio",
+  "command": "node",
+  "args": ["dist/index.js"],
+  "env": {
+    "RPC_URL": {
+      "description": "Base RPC endpoint (optional, defaults to https://mainnet.base.org)",
+      "required": false
+    },
+    "DEPLOYER_PRIVATE_KEY": {
+      "description": "Private key for write operations (launch, buy, sell, claim)",
+      "required": false
+    }
+  },
+  "tools": [
+    "get_platform_stats",
+    "list_launches",
+    "get_token_info",
+    "get_creator_earnings",
+    "quote_buy",
+    "quote_sell",
+    "launch_token",
+    "buy_token",
+    "sell_token",
+    "claim_fees",
+    "get_pool_info",
+    "get_staking_info",
+    "register_referral",
+    "get_referral_stats",
+    "scan_token_security",
+    "get_trending_tokens",
+    "analyze_wallet"
+  ],
+  "categories": ["blockchain", "token", "defi", "trading"],
+  "tags": ["base", "obsd", "launchpad", "erc20", "dexscreener", "aerodrome"]
+}

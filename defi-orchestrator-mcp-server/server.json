@@ -1,0 +1,43 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.lordbasilaiassistant-sudo/defi-orchestrator",
+  "description": "Multi-step DeFi strategy orchestration — swaps, lending, yields on Base/EVM",
+  "repository": {
+    "url": "https://github.com/lordbasilaiassistant-sudo/mcp-servers",
+    "source": "github"
+  },
+  "version": "1.0.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@thryx/defi-orchestrator-mcp-server",
+      "version": "1.0.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "description": "RPC endpoint URL (defaults to Base mainnet)",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false,
+          "name": "RPC_URL"
+        },
+        {
+          "description": "Premium API key for execution access",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": true,
+          "name": "THRYX_API_KEY"
+        },
+        {
+          "description": "Private key for executing strategies and swaps on-chain",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": true,
+          "name": "DEPLOYER_PRIVATE_KEY"
+        }
+      ]
+    }
+  ]
+}

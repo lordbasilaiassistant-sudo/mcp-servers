@@ -1,0 +1,59 @@
+{
+  "name": "@thryx/multi-wallet-mcp-server",
+  "mcpName": "io.github.lordbasilaiassistant-sudo/multi-wallet",
+  "version": "1.0.2",
+  "description": "MCP server for multi-wallet management on Base/EVM — generate wallets, check balances, distribute ETH, execute coordinated swaps",
+  "main": "dist/index.js",
+  "bin": {
+    "multi-wallet-mcp-server": "dist/index.js"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "npx tsc",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "npx tsc --noEmit"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "wallet",
+    "evm",
+    "base",
+    "multi-wallet",
+    "web3",
+    "ethereum",
+    "ai-agent"
+  ],
+  "author": "Anthony <drlordbasil@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lordbasilaiassistant-sudo/mcp-servers",
+    "directory": "multi-wallet-mcp-server"
+  },
+  "files": [
+    "dist",
+    "!dist/__tests__",
+    "server.json",
+    "README.md",
+    "CLAUDE.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "@thryx/mcp-shared": "^1.0.1",
+    "ethers": "^6.16.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.0.0"
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "name": "@thryx/multi-wallet-mcp-server",
+  "version": "1.0.0",
+  "description": "Multi-wallet management for AI agents on Base/EVM. Generate wallet pools (up to 100), check ETH and token balances, distribute ETH across wallets, consolidate funds, scan ERC-20 tokens for rug risk, and monitor gas prices. Private keys are stored server-side and never exposed.",
+  "author": "Thryx (The Agent Cafe)",
+  "license": "MIT",
+  "repository": "https://github.com/lordbasilaiassistant-sudo/mcp-servers",
+  "transport": ["stdio"],
+  "tools": [
+    {
+      "name": "wallet_generate",
+      "description": "Generate new EVM wallets (1-100). Returns addresses only — private keys are stored securely server-side and never exposed via MCP.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "count": { "type": "number", "description": "Number of wallets to generate (1-100, default 5)" },
+          "label_prefix": { "type": "string", "description": "Label prefix for generated wallets (e.g. 'sniper', 'holder')" },
+          "api_key": { "type": "string", "description": "Premium API key for unlimited access" }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "wallet_import",
+      "description": "Import an existing wallet by private key. The key is stored securely server-side and never returned via MCP tools.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "private_key": { "type": "string", "description": "Private key (hex, with or without 0x prefix)" },
+          "label": { "type": "string", "description": "Label for the wallet (e.g. 'main', 'treasury')" },
+          "api_key": { "type": "string", "description": "Premium API key for unlimited access" }
+        },
+        "required": ["private_key"]
+      }
+    },
+    {
+      "name": "wallet_list",
+      "description": "List all managed wallets with addresses and labels. No private keys returned.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    },
+    {
+      "name": "wallet_get_balances",
+      "description": "Check ETH and all well-known token balances for a single wallet on any supported EVM chain.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "address": { "type": "string", "description": "Wallet address to check" },
+          "chain": { "type": "string", "description": "Chain: base, ethereum, arbitrum (default: base)" }
+        },
+        "required": ["address"]
+      }
+    },
+    {
+      "name": "wallet_get_all_balances",
+      "description": "Check ETH balances for ALL managed wallets at once. Returns total portfolio value across the entire wallet pool.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "chain": { "type": "string", "description": "Chain: base, ethereum, arbitrum (default: base)" }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "wallet_distribute_eth",
+      "description": "Distribute ETH from a source wallet to multiple destination wallets. Supports simulation mode (confirm=false) before execution.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "from_address": { "type": "string", "description": "Source wallet address (managed wallet or deployer)" },
+          "to_addresses": { "type": "array", "items": { "type": "string" }, "description": "Destination addresses. Omit to distribute to ALL managed wallets." },
+          "amount_each": { "type": "string", "description": "ETH to send to each wallet (e.g. '0.001')" },
+          "chain": { "type": "string", "description": "Chain (default: base)" },
+          "confirm": { "type": "boolean", "description": "Must be true to execute. False simulates first." },
+          "api_key": { "type": "string", "description": "Premium API key for unlimited access" }
+        },
+        "required": ["from_address", "amount_each"]
+      }
+    },
+    {
+      "name": "wallet_consolidate_eth",
+      "description": "Consolidate ETH from all managed wallets back to a single destination address. Leaves a configurable gas reserve in each wallet.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "to_address": { "type": "string", "description": "Destination address to receive consolidated ETH" },
+          "chain": { "type": "string", "description": "Chain (default: base)" },
+          "gas_reserve": { "type": "string", "description": "ETH to leave in each wallet for gas (default: 0.0001)" },
+          "confirm": { "type": "boolean", "description": "Must be true to execute." },
+          "api_key": { "type": "string", "description": "Premium API key for unlimited access" }
+        },
+        "required": ["to_address"]
+      }
+    },
+    {
+      "name": "wallet_scan_token",
+      "description": "Security scan an ERC-20 token contract. Detects honeypot risk, hidden mint, blacklist, pause, owner permissions, and proxy patterns. Returns rug risk score 0-100.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "token": { "type": "string", "description": "Token contract address to scan" },
+          "chain": { "type": "string", "description": "Chain (default: base)" }
+        },
+        "required": ["token"]
+      }
+    },
+    {
+      "name": "wallet_get_gas",
+      "description": "Get current gas prices on a chain including gasPrice, maxFeePerGas, maxPriorityFeePerGas, and estimated transfer cost.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "chain": { "type": "string", "description": "Chain (default: base)" }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "wallet_get_token_balance",
+      "description": "Check a specific ERC-20 token balance for a wallet. Supports any token address, not just well-known ones.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "wallet": { "type": "string", "description": "Wallet address to check" },
+          "token": { "type": "string", "description": "ERC-20 token contract address" },
+          "chain": { "type": "string", "description": "Chain (default: base)" }
+        },
+        "required": ["wallet", "token"]
+      }
+    }
+  ],
+  "pricing": {
+    "model": "subscription",
+    "tiers": {
+      "free": {
+        "tools": ["wallet_list", "wallet_get_balances", "wallet_get_all_balances", "wallet_get_token_balance", "wallet_scan_token", "wallet_get_gas"],
+        "rateLimit": "30/min"
+      },
+      "pro": {
+        "price": "$14/mo",
+        "tools": ["wallet_generate", "wallet_import", "wallet_list", "wallet_get_balances", "wallet_get_all_balances", "wallet_distribute_eth", "wallet_consolidate_eth", "wallet_scan_token", "wallet_get_gas", "wallet_get_token_balance"],
+        "rateLimit": "60/min"
+      }
+    }
+  },
+  "requirements": {
+    "env": ["RPC_URL"],
+    "optionalEnv": ["DEPLOYER_PRIVATE_KEY", "THRYX_API_KEY"]
+  },
+  "categories": ["blockchain", "ethereum", "base", "wallet", "multi-wallet", "token-security", "portfolio"],
+  "install": {
+    "npm": "npm install @thryx/multi-wallet-mcp-server",
+    "config": {
+      "mcpServers": {
+        "multi-wallet": {
+          "command": "npx",
+          "args": ["@thryx/multi-wallet-mcp-server"],
+          "env": {
+            "THRYX_API_KEY": "your-api-key"
+          }
+        }
+      }
+    }
+  }
+}

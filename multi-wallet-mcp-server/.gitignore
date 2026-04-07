@@ -1,0 +1,11 @@
+node_modules/
+dist/
+*.env
+.env*
+wallets.json
+*wallet*.json
+*key*.json
+*secret*
+*private*
+*.tsbuildinfo
+.DS_Store

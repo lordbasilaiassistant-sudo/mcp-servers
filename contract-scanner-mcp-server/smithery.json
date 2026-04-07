@@ -1,0 +1,97 @@
+{
+  "name": "@thryx/contract-scanner-mcp-server",
+  "version": "1.0.0",
+  "description": "Smart contract security scanner for AI agents. Analyze any Solidity contract for vulnerabilities (reentrancy, hidden mint, backdoors, proxy risks, access control) BEFORE interacting with it. Returns risk scores, actionable findings, and calldata decoding. Supports Base, Ethereum, and Arbitrum.",
+  "author": "Thryx (The Agent Cafe)",
+  "license": "MIT",
+  "repository": "https://github.com/lordbasilaiassistant-sudo/mcp-servers",
+  "transport": ["stdio"],
+  "tools": [
+    {
+      "name": "scanner_analyze_contract",
+      "description": "Full security report for any smart contract. Fetches source code (if verified), analyzes bytecode, detects 20+ vulnerability patterns (reentrancy, hidden mint, backdoors, proxy risks, access control), and returns a risk score 0-100 with actionable findings.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "address": { "type": "string", "description": "Contract address to analyze (0x...)" },
+          "chain": { "type": "string", "description": "Chain: base, ethereum, arbitrum (default: base)" },
+          "api_key": { "type": "string", "description": "Premium API key for unlimited scans" }
+        },
+        "required": ["address"]
+      }
+    },
+    {
+      "name": "scanner_compare_contracts",
+      "description": "Compare two smart contracts side-by-side. Detects clones (identical bytecode), compares risk scores, and identifies differences in access control and vulnerabilities. Useful for choosing between similar contracts.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "address1": { "type": "string", "description": "First contract address (0x...)" },
+          "address2": { "type": "string", "description": "Second contract address (0x...)" },
+          "chain": { "type": "string", "description": "Chain: base, ethereum, arbitrum (default: base)" },
+          "api_key": { "type": "string", "description": "Premium API key for unlimited scans" }
+        },
+        "required": ["address1", "address2"]
+      }
+    },
+    {
+      "name": "scanner_check_address",
+      "description": "Quick safety check on any address — contract vs EOA, verification status, risk flags (selfdestruct, proxy, mint, pause, blacklist). Returns in <1 second for fast triage.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "address": { "type": "string", "description": "Address to check (0x...)" },
+          "chain": { "type": "string", "description": "Chain: base, ethereum, arbitrum (default: base)" },
+          "api_key": { "type": "string", "description": "Optional premium API key to bypass rate limits" }
+        },
+        "required": ["address"]
+      }
+    },
+    {
+      "name": "scanner_decode_calldata",
+      "description": "Decode raw transaction calldata into human-readable function calls. Identifies the function, decodes parameters, and flags dangerous operations (unlimited approve, delegatecall, ownership transfers).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "calldata": { "type": "string", "description": "Raw calldata hex string (0x...)" },
+          "abi": { "type": "string", "description": "Contract ABI as JSON string for full parameter decoding (optional)" },
+          "api_key": { "type": "string", "description": "Optional premium API key to bypass rate limits" }
+        },
+        "required": ["calldata"]
+      }
+    }
+  ],
+  "pricing": {
+    "model": "subscription",
+    "tiers": {
+      "free": {
+        "tools": ["scanner_check_address", "scanner_decode_calldata"],
+        "rateLimit": "30/min"
+      },
+      "pro": {
+        "price": "$9/mo",
+        "tools": ["scanner_analyze_contract", "scanner_compare_contracts", "scanner_check_address", "scanner_decode_calldata"],
+        "rateLimit": "60/min"
+      }
+    }
+  },
+  "requirements": {
+    "env": ["RPC_URL"],
+    "optionalEnv": ["BASESCAN_API_KEY", "ETHERSCAN_API_KEY", "ARBISCAN_API_KEY", "THRYX_API_KEY"]
+  },
+  "categories": ["blockchain", "ethereum", "base", "security", "smart-contracts", "audit", "solidity"],
+  "install": {
+    "npm": "npm install @thryx/contract-scanner-mcp-server",
+    "config": {
+      "mcpServers": {
+        "contract-scanner": {
+          "command": "npx",
+          "args": ["@thryx/contract-scanner-mcp-server"],
+          "env": {
+            "THRYX_API_KEY": "your-api-key"
+          }
+        }
+      }
+    }
+  }
+}

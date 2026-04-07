@@ -1,0 +1,61 @@
+{
+  "name": "@thryx/contract-scanner-mcp-server",
+  "mcpName": "io.github.lordbasilaiassistant-sudo/contract-scanner",
+  "version": "1.0.2",
+  "description": "MCP server for Solidity smart contract security scanning — analyze contracts for vulnerabilities, decode calldata, compare contracts before interacting",
+  "main": "dist/index.js",
+  "bin": {
+    "contract-scanner-mcp-server": "dist/index.js"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "npx tsc",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "npx tsc --noEmit"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "smart-contract",
+    "security",
+    "solidity",
+    "scanner",
+    "audit",
+    "evm",
+    "base",
+    "ethereum",
+    "ai-agent"
+  ],
+  "author": "Anthony <drlordbasil@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lordbasilaiassistant-sudo/mcp-servers",
+    "directory": "contract-scanner-mcp-server"
+  },
+  "files": [
+    "dist",
+    "!dist/__tests__",
+    "server.json",
+    "README.md",
+    "CLAUDE.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "@thryx/mcp-shared": "^1.0.1",
+    "ethers": "^6.16.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.0.0"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "name": "@thryx/mcp-shared",
+  "version": "1.0.1",
+  "description": "Shared utilities for Thryx MCP servers — EVM client, helpers, chain configs, rate limiting",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "npx tsc",
+    "dev": "npx tsc --watch"
+  },
+  "keywords": [
+    "mcp",
+    "evm",
+    "shared",
+    "thryx"
+  ],
+  "author": "Anthony <drlordbasil@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lordbasilaiassistant-sudo/mcp-servers",
+    "directory": "shared"
+  },
+  "files": [
+    "dist",
+    "!dist/__tests__"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "ethers": "^6.16.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "@types/node": "^22.0.0"
+  }
+}

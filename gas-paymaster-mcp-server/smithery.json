@@ -1,0 +1,122 @@
+{
+  "name": "@thryx/gas-paymaster-mcp-server",
+  "version": "1.0.0",
+  "description": "Gas credit management and sponsored transactions for AI agents via The Agent Cafe paymaster on Base mainnet. Check gas tank levels, estimate transaction costs across EVM chains, optimize batch transactions with Multicall3, send gas-sponsored transactions, and analyze gas price trends.",
+  "author": "Thryx (The Agent Cafe)",
+  "license": "MIT",
+  "repository": "https://github.com/lordbasilaiassistant-sudo/mcp-servers",
+  "transport": ["stdio"],
+  "tools": [
+    {
+      "name": "gas_check_tank",
+      "description": "Check gas credit balance in The Agent Cafe paymaster. Returns credit balance in ETH/USD, estimated transactions remaining, tank health status, and next-action suggestion.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "wallet": { "type": "string", "description": "Wallet address to check. Defaults to deployer wallet." }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "gas_estimate",
+      "description": "Estimate gas cost for a transaction on any EVM chain. Returns cost in ETH and USD at slow/standard/fast speeds, whether the paymaster can cover it, and optimal timing advice.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "to": { "type": "string", "description": "Destination address for the transaction" },
+          "data": { "type": "string", "description": "Transaction calldata (hex). Omit for ETH transfers." },
+          "value": { "type": "string", "description": "ETH value to send (e.g. '0.1'). Defaults to 0." },
+          "chain": { "type": "string", "description": "Chain name or ID (default: base)" }
+        },
+        "required": ["to"]
+      }
+    },
+    {
+      "name": "gas_price_history",
+      "description": "Get gas price trends for the last N hours. Returns average/min/max prices, current percentile, cheapest time windows, and trend direction for timing transaction sends.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "chain": { "type": "string", "description": "Chain name or ID (default: base)" },
+          "hours": { "type": "number", "description": "Hours of history to analyze (1-24, default: 24)" }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "gas_optimize_batch",
+      "description": "Analyze a batch of transactions for gas optimization. Calculates total cost, identifies which can be batched via Multicall3, estimates savings, and recommends whether to send now or wait.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "transactions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "to": { "type": "string" },
+                "data": { "type": "string" },
+                "value": { "type": "string" }
+              },
+              "required": ["to"]
+            },
+            "description": "Array of transactions to analyze (1-50)"
+          },
+          "chain": { "type": "string", "description": "Chain name or ID (default: base)" },
+          "api_key": { "type": "string", "description": "Premium API key for unlimited access" }
+        },
+        "required": ["transactions"]
+      }
+    },
+    {
+      "name": "gas_send_sponsored",
+      "description": "Send a transaction sponsored by The Agent Cafe paymaster. Checks gas tank credits, submits via paymaster if sufficient, returns tx hash and remaining credits. Set confirm: true to execute (dry-run by default).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "to": { "type": "string", "description": "Destination address" },
+          "data": { "type": "string", "description": "Transaction calldata (hex). Omit for ETH transfers." },
+          "value": { "type": "string", "description": "ETH value to send (e.g. '0.1'). Defaults to 0." },
+          "chain": { "type": "string", "description": "Chain (default: base). Only Base supported for sponsored txs." },
+          "confirm": { "type": "boolean", "description": "Set true to execute. False returns dry-run estimate." },
+          "api_key": { "type": "string", "description": "Premium API key for unlimited access" }
+        },
+        "required": ["to"]
+      }
+    }
+  ],
+  "pricing": {
+    "model": "subscription",
+    "tiers": {
+      "free": {
+        "tools": ["gas_check_tank", "gas_estimate", "gas_price_history"],
+        "rateLimit": "30/min"
+      },
+      "pro": {
+        "price": "$12/mo",
+        "tools": ["gas_check_tank", "gas_estimate", "gas_price_history", "gas_optimize_batch", "gas_send_sponsored"],
+        "rateLimit": "60/min"
+      }
+    }
+  },
+  "requirements": {
+    "env": ["RPC_URL"],
+    "optionalEnv": ["DEPLOYER_PRIVATE_KEY", "THRYX_API_KEY"]
+  },
+  "categories": ["blockchain", "ethereum", "base", "gas", "paymaster", "sponsored-transactions", "optimization"],
+  "install": {
+    "npm": "npm install @thryx/gas-paymaster-mcp-server",
+    "config": {
+      "mcpServers": {
+        "gas-paymaster": {
+          "command": "npx",
+          "args": ["@thryx/gas-paymaster-mcp-server"],
+          "env": {
+            "THRYX_API_KEY": "your-api-key"
+          }
+        }
+      }
+    }
+  }
+}

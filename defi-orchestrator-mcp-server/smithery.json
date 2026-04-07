@@ -1,0 +1,114 @@
+{
+  "name": "@thryx/defi-orchestrator-mcp-server",
+  "version": "1.0.0",
+  "description": "Multi-step DeFi strategy orchestration for AI agents on Base/EVM. Simulate and execute compound DeFi strategies (swaps, lending, liquidity), compare DEX quotes across Uniswap V3 and Aerodrome, check portfolio positions on Aave V3, and discover yield opportunities — all with built-in safety rails.",
+  "author": "Thryx (The Agent Cafe)",
+  "license": "MIT",
+  "repository": "https://github.com/lordbasilaiassistant-sudo/mcp-servers",
+  "transport": ["stdio"],
+  "tools": [
+    {
+      "name": "defi_simulate_strategy",
+      "description": "Simulate a multi-step DeFi strategy WITHOUT executing. Accepts natural language like 'swap 1 ETH to USDC' or 'provide ETH/USDC liquidity on Aerodrome'. Returns step-by-step plan with gas estimates, risk assessment, and simulated outcome.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "strategy": { "type": "string", "description": "Natural language strategy, e.g. 'swap 1 ETH to USDC on Uniswap', 'supply 2 ETH to Aave'" },
+          "params": { "type": "object", "description": "Optional explicit parameters: tokenIn, tokenOut, amount, etc." },
+          "chain": { "type": "string", "description": "Chain: 'base' (default), 'ethereum', 'arbitrum'" }
+        },
+        "required": ["strategy"]
+      }
+    },
+    {
+      "name": "defi_execute_strategy",
+      "description": "Execute a previously simulated DeFi strategy on-chain. Requires confirm=true as a safety rail. Executes steps sequentially, stops on first failure. Returns all tx hashes, gas used, and final state.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "strategy_id": { "type": "string", "description": "Strategy ID from a previous defi_simulate_strategy call" },
+          "confirm": { "type": "boolean", "description": "Must be true to execute" },
+          "slippage_bps": { "type": "number", "description": "Max slippage in basis points (100 = 1%). Default: 100" },
+          "api_key": { "type": "string", "description": "Premium API key for execution access" }
+        },
+        "required": ["strategy_id", "confirm", "api_key"]
+      }
+    },
+    {
+      "name": "defi_quick_swap",
+      "description": "Quick single token swap with best execution across DEXes (Uniswap V3, Aerodrome). Compares quotes from multiple routes and executes on the best one. Returns tx hash, amounts, price impact, and gas used.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "from_token": { "type": "string", "description": "Token to sell: symbol (ETH, USDC) or contract address" },
+          "to_token": { "type": "string", "description": "Token to buy: symbol (ETH, USDC) or contract address" },
+          "amount": { "type": "string", "description": "Amount to swap (e.g. '1.5' for 1.5 ETH)" },
+          "chain": { "type": "string", "description": "Chain: 'base' (default), 'ethereum', 'arbitrum'" },
+          "slippage_bps": { "type": "number", "description": "Max slippage in basis points (100 = 1%). Default: 100" },
+          "confirm": { "type": "boolean", "description": "Set true to execute. False returns quote comparison only." },
+          "api_key": { "type": "string", "description": "Premium API key for execution" }
+        },
+        "required": ["from_token", "to_token", "amount"]
+      }
+    },
+    {
+      "name": "defi_check_positions",
+      "description": "Check ALL DeFi positions for a wallet in one call. Returns Aave lending positions (supplied, borrowed, health factor, liquidation risk), token balances, and overall portfolio summary with risk assessment and actionable suggestions.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "wallet": { "type": "string", "description": "Wallet address to check (0x...)" },
+          "chain": { "type": "string", "description": "Chain: 'base' (default), 'ethereum', 'arbitrum'" },
+          "protocols": { "type": "array", "items": { "type": "string" }, "description": "Filter to specific protocols: ['aave', 'uniswap', 'aerodrome']. Default: all." }
+        },
+        "required": ["wallet"]
+      }
+    },
+    {
+      "name": "defi_get_yields",
+      "description": "Get best yield opportunities across DeFi protocols on Base. Returns top pools by APY with TVL, risk rating, APY breakdown (base vs rewards), and direct comparisons to help agents recommend where to deploy capital.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "token": { "type": "string", "description": "Filter by token symbol (e.g. 'ETH', 'USDC'). Omit for all." },
+          "chain": { "type": "string", "description": "Chain: 'base' (default)" },
+          "min_tvl": { "type": "number", "description": "Minimum TVL in USD to include. Default: 10000" }
+        },
+        "required": []
+      }
+    }
+  ],
+  "pricing": {
+    "model": "subscription",
+    "tiers": {
+      "free": {
+        "tools": ["defi_simulate_strategy", "defi_check_positions", "defi_get_yields"],
+        "rateLimit": "10/min"
+      },
+      "pro": {
+        "price": "$19/mo",
+        "tools": ["defi_simulate_strategy", "defi_execute_strategy", "defi_quick_swap", "defi_check_positions", "defi_get_yields"],
+        "rateLimit": "60/min"
+      }
+    }
+  },
+  "requirements": {
+    "env": ["RPC_URL"],
+    "optionalEnv": ["DEPLOYER_PRIVATE_KEY", "THRYX_API_KEY"]
+  },
+  "categories": ["blockchain", "ethereum", "base", "defi", "swap", "lending", "yield", "uniswap", "aave", "aerodrome"],
+  "install": {
+    "npm": "npm install @thryx/defi-orchestrator-mcp-server",
+    "config": {
+      "mcpServers": {
+        "defi-orchestrator": {
+          "command": "npx",
+          "args": ["@thryx/defi-orchestrator-mcp-server"],
+          "env": {
+            "THRYX_API_KEY": "your-api-key"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "@thryx/mcp-webhook-worker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cloudflare Worker — Stripe webhook handler for MCP API key fulfillment",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241218.0",
+    "typescript": "^5.7.0",
+    "wrangler": "^4.71.0"
+  }
+}
