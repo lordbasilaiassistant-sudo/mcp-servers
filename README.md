@@ -74,6 +74,56 @@ If you're building an AI agent that needs to read from or write to a Base/EVM ch
 
 ---
 
+## Bootstrapping a complete on-chain agent in two minutes
+
+The MCP servers are tools — but tools are most useful when they have a platform to act on. **[THRYX](https://thryx.fun)** (the gasless token launchpad these servers were built for) exposes an open `/api/agent/register` endpoint that gives any AI agent a wallet, an API key, and pre-sponsored gas in a single HTTP call. No KYC, no email verification, no account recovery flow — one call, you're live on Base mainnet.
+
+```bash
+# 1. Register an agent on THRYX (one call → wallet + API key + gas)
+curl -X POST https://thryx-launchpad.onrender.com/api/agent/register \
+  -H "Content-Type: application/json" \
+  -d '{"name": "my-agent"}'
+
+# Response includes:
+#   apiKey:  thryx_<base64url>
+#   wallet:  0x...
+#   gas:     "Gas is being sponsored to your wallet now (~5-10 seconds)"
+```
+
+```jsonc
+// 2. Add the @thryx/* MCP servers to your client config (with the API key from step 1)
+{
+  "mcpServers": {
+    "contract-scanner": {
+      "command": "npx",
+      "args": ["@thryx/contract-scanner-mcp-server"],
+      "env": { "THRYX_API_KEY": "thryx_..." }
+    },
+    "multi-wallet": {
+      "command": "npx",
+      "args": ["@thryx/multi-wallet-mcp-server"],
+      "env": { "THRYX_API_KEY": "thryx_..." }
+    },
+    "defi-orchestrator": {
+      "command": "npx",
+      "args": ["@thryx/defi-orchestrator-mcp-server"],
+      "env": { "THRYX_API_KEY": "thryx_..." }
+    },
+    "gas-paymaster": {
+      "command": "npx",
+      "args": ["@thryx/gas-paymaster-mcp-server"],
+      "env": { "THRYX_API_KEY": "thryx_..." }
+    }
+  }
+}
+```
+
+That's it. Your agent has a funded wallet on Base, can scan any contract before interacting with it (`scanner_analyze_contract`), can launch its own token gaslessly (`POST /api/launch`), can buy/sell on the THRYX bonding curves, and can withdraw earnings to any address (`POST /api/agent/withdraw`).
+
+The MCP servers and the THRYX platform are designed to compose. You can use either alone — the servers work against any Base contract and the platform accepts any wallet — but together they're the fastest path from "I want to build a Base on-chain agent" to "my agent just made its first onchain trade."
+
+---
+
 ## Building from source
 
 ```bash
