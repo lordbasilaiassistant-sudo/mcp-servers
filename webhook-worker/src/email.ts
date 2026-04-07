@@ -47,13 +47,13 @@ export async function sendKeyDeliveryEmail(
   <pre style="background: #1a1a2e; color: #e0e0e0; padding: 16px; border-radius: 8px; font-size: 13px;">${products.map((p) => `npm install -g @thryx/${p}-mcp-server`).join("\n")}</pre>
 
   <p style="margin-top: 24px;">
-    <a href="https://docs.thryx.dev/mcp" style="background: #4f46e5; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none;">View Documentation</a>
+    <a href="https://github.com/lordbasilaiassistant-sudo/mcp-servers" style="background: #4f46e5; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none;">View Documentation</a>
   </p>
 
   <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;" />
   <p style="font-size: 12px; color: #999;">
     Keep your API key secure. Do not share it publicly or commit it to version control.
-    If you need to regenerate your key, contact support@thryx.dev.
+    If you need to regenerate your key, contact support@thryx.fun.
   </p>
 </div>`;
 
@@ -64,7 +64,7 @@ export async function sendKeyDeliveryEmail(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "Thryx <noreply@thryx.dev>",
+      from: "Thryx <noreply@thryx.fun>",
       to: [email],
       subject: "Your Thryx MCP API Key",
       html,
@@ -93,7 +93,7 @@ export async function sendPaymentFailedEmail(
   <p>
     <a href="https://billing.stripe.com/p/login/thryx" style="background: #4f46e5; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none;">Update Payment Method</a>
   </p>
-  <p style="font-size: 12px; color: #999; margin-top: 24px;">If you believe this is an error, contact support@thryx.dev.</p>
+  <p style="font-size: 12px; color: #999; margin-top: 24px;">If you believe this is an error, contact support@thryx.fun.</p>
 </div>`;
 
   await fetch("https://api.resend.com/emails", {
@@ -103,7 +103,7 @@ export async function sendPaymentFailedEmail(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "Thryx <noreply@thryx.dev>",
+      from: "Thryx <noreply@thryx.fun>",
       to: [email],
       subject: "Action Required: Payment Failed — Thryx MCP",
       html,
@@ -122,7 +122,7 @@ export async function sendCancellationEmail(
 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
   <h1 style="color: #1a1a2e;">Subscription Cancelled</h1>
   <p>Your Thryx MCP subscription has been cancelled and your API keys have been deactivated.</p>
-  <p>If you'd like to resubscribe, visit <a href="https://thryx.dev/pricing">thryx.dev/pricing</a>.</p>
+  <p>If you'd like to resubscribe, visit <a href="https://thryx.fun/pricing">thryx.fun/pricing</a>.</p>
   <p style="font-size: 12px; color: #999; margin-top: 24px;">Thanks for being a customer. — The Thryx Team</p>
 </div>`;
 
@@ -133,7 +133,7 @@ export async function sendCancellationEmail(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "Thryx <noreply@thryx.dev>",
+      from: "Thryx <noreply@thryx.fun>",
       to: [email],
       subject: "Subscription Cancelled — Thryx MCP",
       html,

@@ -124,7 +124,7 @@ function corsHeaders(env?: Env): Record<string, string> {
   // Restrict CORS to known origins. Webhook endpoint doesn't need CORS at all.
   // Only the validate-key endpoint needs it, and it should be server-to-server.
   return {
-    "Access-Control-Allow-Origin": env?.ENVIRONMENT === "development" ? "*" : "https://thryx.dev",
+    "Access-Control-Allow-Origin": env?.ENVIRONMENT === "development" ? "*" : "https://thryx.fun",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization, stripe-signature",
   };
